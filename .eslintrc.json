@@ -24,7 +24,8 @@
   "rules": {
     "import/prefer-default-export": "off",
     "import/extensions": "off",
-    "comma-dangle":"off",
-    "no-console":"off"
+    "comma-dangle": "off",
+    "no-console": "off",
+    "max-len": "off"
   }
 }

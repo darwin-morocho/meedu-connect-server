@@ -16,7 +16,11 @@ const schema = new Schema(
     name: { type: String, required: true, unique: true },
     connections: {
       type: [
-        { socketId: String, username: String, createdAt: { type: Date, default: new Date() } },
+        {
+          socketId: { type: String, unique: true },
+          username: String,
+          createdAt: { type: Date, default: new Date() },
+        },
       ],
       default: [],
     },
@@ -37,8 +41,6 @@ export const checkRoom = async (name: string): Promise<Room | null> => {
   }
 };
 
-const connections = new Map<string, UserConnection[]>();
-
 /**
  * check if a room exist and return the room with the current connected users
  * @param roomName
@@ -57,7 +59,11 @@ export const addConnection = async (
 };
 
 export const removeConnection = async (roomName: string, socketId: string): Promise<void> => {
-  await Rooms.updateOne({ name: roomName }, { $pull: { connections: { socketId } } });
+  console.log('removing connection', socketId);
+  const room = await Rooms.findOneAndUpdate(
+    { name: roomName },
+    { $pull: { connections: { socketId } } }
+  );
 };
 
 export default Rooms;
