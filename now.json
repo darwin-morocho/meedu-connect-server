@@ -4,8 +4,9 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/dist/api/routes/index.js",
+      "dest": "/src/index.js",
       "methods": ["GET", "POST"]
     }
-  ]
+  ],
+  "public": false
 }
