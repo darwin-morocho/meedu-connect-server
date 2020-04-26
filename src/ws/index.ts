@@ -3,7 +3,7 @@
 /* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable no-console */
 import { Server as IOServer, Socket } from 'socket.io';
-import Rooms, { addConnection, removeConnection } from '../mongo/schemes/rooms';
+import { addConnection, removeConnection } from '../mongo/schemes/rooms';
 
 const ws = (io: IOServer): void => {
   io.on('connection', (socket: Socket) => {

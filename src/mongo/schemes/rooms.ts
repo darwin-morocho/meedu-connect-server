@@ -3,7 +3,7 @@ import { Schema, Document, model } from 'mongoose';
 export interface UserConnection {
   socketId: string;
   username: string;
-  createdAt?: string;
+  createdAt?: Date;
 }
 export interface Room extends Document {
   name: string;
@@ -15,7 +15,9 @@ const schema = new Schema(
   {
     name: { type: String, required: true, unique: true },
     connections: {
-      type: [{ socketId: String, username: String, createdAt: Date.now() }],
+      type: [
+        { socketId: String, username: String, createdAt: { type: Date, default: new Date() } },
+      ],
       default: [],
     },
   },
