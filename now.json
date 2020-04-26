@@ -3,14 +3,9 @@
   "builds": [{ "src": "dist/index.js", "use": "@now/node-server" }],
   "routes": [
     {
-      "src": "/",
+      "src": "/(.*)",
       "dest": "/dist/api/routes/index.js",
-      "methods": ["GET"]
-    },
-    {
-      "src": "/api/v1/rooms/create",
-      "dest": "/dist/api/routes/index.js",
-      "methods": ["POST"]
+      "methods": ["GET", "POST"]
     }
   ]
 }
