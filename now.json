@@ -1,11 +1,5 @@
 {
   "version": 2,
-  "builds": [{ "src": "dist/index.js", "use": "@now/node-server" }],
-  "routes": [
-      {
-        "src": "/api/v1/rooms/create",
-        "dest": "/dist/api/routes/index.js",
-        "methods": ["POST"]
-      }
-  ]
+  "builds": [{ "src": "./src/index.ts", "use": "@now/node-server" }],
+  "routes": [{ "src": "/(.*)", "dest": "/dist/src/index.js" }]
 }
