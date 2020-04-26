@@ -15,22 +15,19 @@ const ws = (io: IOServer): void => {
     io.to(socket.id).emit('connected', socket.id);
 
     // a user is trying to join to one room
-    socket.on('join-to', async (roomName: string) => {
-      if (!socket.rooms[roomName]) {
+    socket.on('join-to', async (roomId: string) => {
+      if (!socket.rooms[roomId]) {
         // if the user is not in the room
         const userConnection = { socketId: socket.id, username };
-        const room = await addConnection(roomName, userConnection);
+        const room = await addConnection(roomId, userConnection);
         if (room) {
           // if the room exits
-          socket.join(roomName);
-          // if the user is not yet in the room
-          const connectedUsers = room.connections;
-          console.log('connectedUsers', connectedUsers);
-          socket.handshake.query.room = roomName;
-          socket.broadcast.to(roomName).emit('joined', userConnection); // notify to the others users
-          io.to(socket.id).emit('joined-to', { roomName, connectedUsers }); // notify to the user
+          socket.join(roomId);
+          socket.handshake.query.roomId = roomId;
+          socket.broadcast.to(roomId).emit('joined', userConnection); // notify to the others users
+          io.to(socket.id).emit('joined-to', room); // notify to the user
         } else {
-          io.to(socket.id).emit('room-not-found', roomName);
+          io.to(socket.id).emit('room-not-found', roomId);
         }
       }
     });
@@ -62,22 +59,22 @@ const ws = (io: IOServer): void => {
       });
     });
     socket.on('leave', () => {
-      const { room } = socket.handshake.query;
-      if (room) {
-        socket.leave(room);
-        socket.handshake.query.room = null;
-        removeConnection(room, socket.id);
-        socket.broadcast.to(room).emit('disconnected-user', socket.id);
+      const { roomId } = socket.handshake.query;
+      if (roomId) {
+        socket.leave(roomId);
+        socket.handshake.query.roomId = null;
+        removeConnection(roomId, socket.id);
+        socket.broadcast.to(roomId).emit('disconnected-user', socket.id);
       }
     });
 
     socket.on('disconnect', () => {
       console.log('disconnected:', socket.id);
-      const { room } = socket.handshake.query;
-      if (room) {
-        console.log('leave room:', room, socket.id);
-        removeConnection(room, socket.id);
-        io.to(room).emit('disconnected-user', socket.id);
+      const { roomId } = socket.handshake.query;
+      if (roomId) {
+        console.log('leave room:', roomId, socket.id);
+        removeConnection(roomId, socket.id);
+        io.to(roomId).emit('disconnected-user', socket.id);
       }
     });
   });

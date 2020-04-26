@@ -26,6 +26,7 @@
     "import/extensions": "off",
     "comma-dangle": "off",
     "no-console": "off",
-    "max-len": "off"
+    "max-len": "off",
+    "no-underscore-dangle": "off"
   }
 }

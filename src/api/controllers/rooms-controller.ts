@@ -1,14 +1,17 @@
+/* eslint-disable no-throw-literal */
 import { Request, Response } from 'express';
-import { v5 as uuidv5 } from 'uuid'; // For version 5
-
 import Rooms from '../../mongo/schemes/rooms';
 
 export const create = async (req: Request, res: Response): Promise<void> => {
   try {
-    const MY_NAMESPACE = '092b2507-b8b8-5ac5-8da1-52f5fa8143ee';
-    const name: string = uuidv5(Date.now().toString(), MY_NAMESPACE);
-    await Rooms.create({ name });
-    res.send(name);
+    const name: string = req.body.name as string;
+    if (!name || name.trim().length === 0) {
+      throw { code: 400, message: 'Invalid name' };
+    }
+
+    const description: string = req.body.name as string;
+    const room = await Rooms.create({ name, description });
+    res.send(room._id);
   } catch (e) {
     const status: number = e.code || 500;
     res.status(status).send(e.message);

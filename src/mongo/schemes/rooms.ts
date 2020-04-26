@@ -7,13 +7,15 @@ export interface UserConnection {
 }
 export interface Room extends Document {
   name: string;
+  description: string;
   connections: UserConnection[];
 }
 
 // schema
 const schema = new Schema(
   {
-    name: { type: String, required: true, unique: true },
+    name: { type: String, required: true },
+    description: { type: String },
     connections: {
       type: [
         {
@@ -31,9 +33,9 @@ const schema = new Schema(
 // model
 const Rooms = model<Room>('room', schema);
 
-export const checkRoom = async (name: string): Promise<Room | null> => {
+export const checkRoom = async (roomId: string): Promise<Room | null> => {
   try {
-    const room = await Rooms.findOne({ name });
+    const room = await Rooms.findById(roomId);
     return room;
   } catch (e) {
     console.log(e);
@@ -47,10 +49,10 @@ export const checkRoom = async (name: string): Promise<Room | null> => {
  * @param userConnection
  */
 export const addConnection = async (
-  roomName: string,
+  roomId: string,
   userConnection: UserConnection
 ): Promise<Room | null> => {
-  const room = await checkRoom(roomName);
+  const room = await checkRoom(roomId);
   if (!room) return room;
   const tmp = room.toJSON();
   room.connections.push(userConnection);
@@ -58,12 +60,9 @@ export const addConnection = async (
   return tmp;
 };
 
-export const removeConnection = async (roomName: string, socketId: string): Promise<void> => {
+export const removeConnection = async (roomId: string, socketId: string): Promise<void> => {
   console.log('removing connection', socketId);
-  const room = await Rooms.findOneAndUpdate(
-    { name: roomName },
-    { $pull: { connections: { socketId } } }
-  );
+  await Rooms.findById(roomId, { $pull: { connections: { socketId } } });
 };
 
 export default Rooms;
