@@ -10,7 +10,7 @@
     {
       "src": "/(.*)",
       "dest": "/src/index.ts",
-      "methods": ["GET", "POST"]
+      "methods": ["GET"]
     },
     {
       "src": "/api/v1/rooms/create",
