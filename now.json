@@ -1,14 +1,21 @@
 {
   "version": 2,
-  "builds": [{
-    "src": "src/index.ts",
-    "use": "@now/node-server"
-  }],
+  "builds": [
+    {
+      "src": "./src/index.ts",
+      "use": "@now/node-server"
+    }
+  ],
   "routes": [
     {
       "src": "/(.*)",
       "dest": "/src/index.js",
       "methods": ["GET", "POST"]
+    },
+    {
+      "src": "/api/v1/rooms/create",
+      "dest": "/src/index.js",
+      "methods": ["POST"]
     }
   ],
   "public": false
