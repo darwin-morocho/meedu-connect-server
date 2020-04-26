@@ -4,12 +4,12 @@
   "routes": [
     {
       "src": "/",
-      "dest": "/api/routes/index.js",
+      "dest": "/dist/api/routes/index.js",
       "methods": ["GET"]
     },
     {
       "src": "/api/v1/rooms/create",
-      "dest": "/api/routes/index.js",
+      "dest": "/dist/api/routes/index.js",
       "methods": ["POST"]
     }
   ]
