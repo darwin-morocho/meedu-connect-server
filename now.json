@@ -14,7 +14,7 @@
     },
     {
       "src": "/api/v1/rooms/create",
-      "dest": "/src/index.ts",
+      "dest": "/src/api/routes/index.ts",
       "methods": ["POST"]
     }
   ],
