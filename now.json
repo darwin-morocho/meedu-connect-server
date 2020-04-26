@@ -1,12 +1,15 @@
 {
   "version": 2,
-  "builds": [
+  "builds": [{
+    "src": "src/server.ts",
+    "use": "@now/node-server"
+  }],
+  "routes": [
     {
-      "src": "./src/server.ts",
-      "use": "@now/node-server"
+      "src": "/(.*)",
+      "dest": "/src/index.js",
+      "methods": ["GET", "POST"]
     }
   ],
-  "routes": [
- 
-  ]
+  "public": false
 }
