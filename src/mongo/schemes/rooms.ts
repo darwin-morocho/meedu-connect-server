@@ -18,14 +18,14 @@ const schema = new Schema(
   {
     name: { type: String, required: true },
     description: { type: String },
-    microphoneEnabled: { type: Boolean, default: true },
-    cameraEnabled: { type: Boolean, default: true },
     connections: {
       type: [
         {
           socketId: { type: String, unique: true },
           username: String,
           createdAt: { type: Date, default: new Date() },
+          microphoneEnabled: { type: Boolean, default: true },
+          cameraEnabled: { type: Boolean, default: true },
         },
       ],
       default: [],
@@ -41,7 +41,7 @@ export const checkRoom = async (roomId: string): Promise<Room | null> => {
   try {
     const room = await Rooms.findById(roomId);
     if (room) {
-      console.log(room.connections);
+      console.log('conections', room.connections);
     }
     return room;
   } catch (e) {
@@ -62,6 +62,7 @@ export const addConnection = async (
   const room = await checkRoom(roomId);
   if (!room) return room;
   const tmp = room.toJSON();
+  console.log('userConection', userConnection);
   room.connections.push(userConnection);
   await room.save();
   return tmp;
@@ -94,9 +95,9 @@ export const updateMediaStatus = async (data: {
       },
     }
   );
-  // setTimeout(() => {
-  //   checkRoom(roomId);
-  // }, 2000);
+  setTimeout(() => {
+    checkRoom(data.roomId);
+  }, 2000);
 };
 
 export default Rooms;
