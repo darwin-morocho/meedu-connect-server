@@ -11,7 +11,7 @@ export const create = async (req: Request, res: Response): Promise<void> => {
 
     const description: string = req.body.name as string;
     const room = await Rooms.create({ name, description });
-    res.send(room._id);
+    res.send(room);
   } catch (e) {
     const status: number = e.code || 500;
     res.status(status).send(e.message);
