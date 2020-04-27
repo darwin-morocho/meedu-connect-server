@@ -13,7 +13,12 @@ export const create = async (req: Request, res: Response): Promise<void> => {
     const room = await Rooms.create({ name, description });
     res.send(room);
   } catch (e) {
-    const status: number = e.code || 500;
-    res.status(status).send(e.message);
+    console.log(e);
+    if (e.name && e.name === 'MongoError') {
+      res.status(500).send('Error no se pudo procesar la solicitud');
+    } else {
+      const status = e.code || 500;
+      res.status(status).send(e.message);
+    }
   }
 };
