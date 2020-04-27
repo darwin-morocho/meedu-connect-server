@@ -3,7 +3,7 @@
 /* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable no-console */
 import { Server as IOServer, Socket } from 'socket.io';
-import { addConnection, removeConnection } from '../mongo/schemes/rooms';
+import { addConnection, removeConnection, updateMediaStatus } from '../mongo/schemes/rooms';
 
 const ws = (io: IOServer): void => {
   io.on('connection', (socket: Socket) => {
@@ -15,22 +15,43 @@ const ws = (io: IOServer): void => {
     io.to(socket.id).emit('connected', socket.id);
 
     // a user is trying to join to one room
-    socket.on('join-to', async (roomId: string) => {
-      if (!socket.rooms[roomId]) {
-        // if the user is not in the room
-        const userConnection = { socketId: socket.id, username };
-        const room = await addConnection(roomId, userConnection);
-        if (room) {
-          // if the room exits
-          socket.join(roomId);
-          socket.handshake.query.roomId = roomId;
-          socket.broadcast.to(roomId).emit('joined', userConnection); // notify to the others users
-          io.to(socket.id).emit('joined-to', room); // notify to the user
-        } else {
-          io.to(socket.id).emit('room-not-found', roomId);
+    socket.on(
+      'join-to',
+      async (data: { roomId: string; microphoneEnabled: boolean; cameraEnabled: boolean }) => {
+        if (!socket.rooms[data.roomId]) {
+          // if the user is not in the room
+          const userConnection = {
+            socketId: socket.id,
+            username,
+            cameraEnabled: data.cameraEnabled,
+            microphoneEnabled: data.cameraEnabled,
+          };
+          const room = await addConnection(data.roomId, userConnection);
+          if (room) {
+            // if the room exits
+            socket.join(data.roomId);
+            socket.handshake.query.roomId = data.roomId;
+            socket.broadcast.to(data.roomId).emit('joined', userConnection); // notify to the others users
+            io.to(socket.id).emit('joined-to', room); // notify to the user
+          } else {
+            io.to(socket.id).emit('room-not-found', data.roomId);
+          }
         }
       }
-    });
+    );
+
+    // notify to the other user that the camera or micro changes
+    socket.on(
+      'camera-or-microphone-changed',
+      (data: { microphoneEnabled: boolean; cameraEnabled: boolean }) => {
+        const { roomId } = socket.handshake.query;
+        if (roomId) {
+          const dataToSend = { socketId: socket.id, ...data };
+          socket.broadcast.to(roomId).emit('camera-or-microphone-changed', dataToSend);
+          updateMediaStatus({ roomId, ...dataToSend }); // updates into db
+        }
+      }
+    );
 
     // new ice canditate was recived
     socket.on('new-ice-candidate', (data: { socketId: string; candidate: any }) => {
