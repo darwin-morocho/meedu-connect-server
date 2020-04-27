@@ -1,4 +1,4 @@
-import { Schema, Document, model } from 'mongoose';
+import { Schema, Document, model, Types } from 'mongoose';
 
 export interface UserConnection {
   socketId: string;
@@ -36,6 +36,9 @@ const Rooms = model<Room>('room', schema);
 export const checkRoom = async (roomId: string): Promise<Room | null> => {
   try {
     const room = await Rooms.findById(roomId);
+    if (room) {
+      console.log(room.connections);
+    }
     return room;
   } catch (e) {
     console.log(e);
@@ -62,7 +65,13 @@ export const addConnection = async (
 
 export const removeConnection = async (roomId: string, socketId: string): Promise<void> => {
   console.log('removing connection', socketId);
-  await Rooms.findById(roomId, { $pull: { connections: { socketId } } });
+  await Rooms.findOneAndUpdate(
+    { _id: Types.ObjectId(roomId) },
+    { $pull: { connections: { socketId } } }
+  );
+  // setTimeout(() => {
+  //   checkRoom(roomId);
+  // }, 2000);
 };
 
 export default Rooms;

@@ -27,6 +27,7 @@
     "comma-dangle": "off",
     "no-console": "off",
     "max-len": "off",
-    "no-underscore-dangle": "off"
+    "no-underscore-dangle": "off",
+    "object-curly-newline":"off"
   }
 }
