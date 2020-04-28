@@ -24,7 +24,7 @@ const ws = (io: IOServer): void => {
             socketId: socket.id,
             username,
             cameraEnabled: data.cameraEnabled,
-            microphoneEnabled: data.cameraEnabled,
+            microphoneEnabled: data.microphoneEnabled,
           };
           const room = await addConnection(data.roomId, userConnection);
           if (room) {
