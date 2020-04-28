@@ -86,18 +86,22 @@ export const updateMediaStatus = async (data: {
   cameraEnabled: boolean;
 }): Promise<void> => {
   // console.log('removing connection', socketId);
-  await Rooms.findOneAndUpdate(
-    { _id: Types.ObjectId(data.roomId), 'connections.socketId': data.socketId },
-    {
-      $set: {
-        'connections.microphoneEnabled': data.microphoneEnabled,
-        'connections.cameraEnabled': data.cameraEnabled,
-      },
-    }
-  );
-  setTimeout(() => {
-    checkRoom(data.roomId);
-  }, 2000);
+  try {
+    await Rooms.findOneAndUpdate(
+      { _id: Types.ObjectId(data.roomId), 'connections.socketId': data.socketId },
+      {
+        $set: {
+          'connections.microphoneEnabled': data.microphoneEnabled,
+          'connections.cameraEnabled': data.cameraEnabled,
+        },
+      }
+    );
+    setTimeout(() => {
+      checkRoom(data.roomId);
+    }, 2000);
+  } catch (e) {
+    console.log('update media:', e);
+  }
 };
 
 export default Rooms;
