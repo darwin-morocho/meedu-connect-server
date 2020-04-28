@@ -1,6 +1,22 @@
 /* eslint-disable no-param-reassign */
 import { Server as IOServer, Socket } from 'socket.io';
-import { addConnection, updateMediaStatus, removeConnection } from '../mongo/schemes/rooms';
+import Rooms, {
+  addConnection,
+  updateMediaStatus,
+  removeConnection,
+  checkRoom,
+} from '../mongo/schemes/rooms';
+
+// eslint-disable-next-line arrow-body-style
+const getSocketsInRoom = (io: IOServer, roomId: string): Promise<string[]> => {
+  return new Promise<string[]>((resolve, reject) => {
+    io.sockets.in(roomId).clients((error: any, clients: any) => {
+      if (error) resolve([]);
+      // console.log(clients); // => [6em3d4TJP8Et9EMNAAAA, G5p55dHhGgUnLUctAAAB]
+      resolve(clients);
+    });
+  });
+};
 
 /**
  * manage when a user wants to connecto some room
@@ -12,6 +28,18 @@ export const joinTo = (io: IOServer, socket: Socket): void => {
   socket.on(
     'join-to',
     async (data: { roomId: string; microphoneEnabled: boolean; cameraEnabled: boolean }) => {
+      const clients = await getSocketsInRoom(io, data.roomId);
+      if (clients.length === 0) {
+        // if there is no body in the roomId
+        const room = await checkRoom(data.roomId);
+        if (room && room.connections.length > 0) {
+          // if we have data of a prevoius session
+          room.connections = [];
+          await room.save();
+          console.log('deleting residual connections', data.roomId);
+        }
+      }
+
       if (!socket.rooms[data.roomId]) {
         // if the user is not in the room
         const userConnection = {

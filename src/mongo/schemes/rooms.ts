@@ -91,8 +91,8 @@ export const updateMediaStatus = async (data: {
       { _id: Types.ObjectId(data.roomId), 'connections.socketId': data.socketId },
       {
         $set: {
-          'connections.microphoneEnabled': data.microphoneEnabled,
-          'connections.cameraEnabled': data.cameraEnabled,
+          'connections.$.microphoneEnabled': data.microphoneEnabled,
+          'connections.$.cameraEnabled': data.cameraEnabled,
         },
       }
     );
