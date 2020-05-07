@@ -28,6 +28,8 @@
     "no-console": "off",
     "max-len": "off",
     "no-underscore-dangle": "off",
-    "object-curly-newline":"off"
+    "object-curly-newline": "off",
+    "no-throw-literal": "off",
+    "@typescript-eslint/no-explicit-any": "off"
   }
 }

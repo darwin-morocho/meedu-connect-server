@@ -6,6 +6,7 @@ import Rooms, {
   removeConnection,
   checkRoom,
 } from '../mongo/schemes/rooms';
+import { UserAuthData } from '../models';
 
 // eslint-disable-next-line arrow-body-style
 const getSocketsInRoom = (io: IOServer, roomId: string): Promise<string[]> => {
@@ -24,7 +25,7 @@ const getSocketsInRoom = (io: IOServer, roomId: string): Promise<string[]> => {
  * @param socket
  */
 export const joinTo = (io: IOServer, socket: Socket): void => {
-  const { username } = socket.handshake.query;
+  const { username } = socket.handshake.query.userData as UserAuthData;
   socket.on(
     'join-to',
     async (data: { roomId: string; microphoneEnabled: boolean; cameraEnabled: boolean }) => {

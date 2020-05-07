@@ -1,4 +1,6 @@
 import { Schema, Document, model, Types } from 'mongoose';
+import { App } from './app';
+import { UserAuthData } from '../../models';
 
 export interface UserConnection {
   socketId: string;
@@ -11,6 +13,8 @@ export interface Room extends Document {
   name: string;
   description: string;
   connections: UserConnection[];
+  app: App;
+  user: UserAuthData;
 }
 
 // schema
@@ -18,6 +22,12 @@ const schema = new Schema(
   {
     name: { type: String, required: true },
     description: { type: String },
+    app: { type: Schema.Types.ObjectId, ref: 'app', required: true },
+    user: {
+      username: { type: String, required: true },
+      userId: String,
+      extra: Object,
+    },
     connections: {
       type: [
         {
