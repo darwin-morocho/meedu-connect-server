@@ -2,6 +2,7 @@
 /* eslint-disable no-console */
 import express, { Application } from 'express';
 import mongoose from 'mongoose';
+import path from 'path';
 import cors from 'cors';
 import http from 'http';
 import bodyParser from 'body-parser';
@@ -13,11 +14,16 @@ import v1 from './api/routes';
 dotenv.config();
 
 const app: Application = express();
+app.use(express.static('public'));
+// set the view engine to ejs
+app.set('view engine', 'ejs');
+// enable cors
 app.use(cors());
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
+
 v1(app);
 const server = http.createServer(app);
 

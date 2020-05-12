@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable no-throw-literal */
 import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
 import Apps from '../mongo/schemes/app';
 import { UserAuthData } from '../models';
 import AES from '../api/security/aes';
@@ -25,7 +26,7 @@ declare global {
  */
 export const thirdAuth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const apiKey: string = req.headers.apiKey as string;
+    const apiKey: string = req.headers.apikey as string;
     if (!apiKey || apiKey.trim().length === 0) {
       throw { code: 400, message: 'invalid api key' };
     }
@@ -67,12 +68,13 @@ export const userAuth = async (req: Request, res: Response, next: NextFunction):
     if (!token || token.trim().length === 0) {
       throw { code: 400, message: 'invalid token' };
     }
-    const data = AES.decrypt(token, true);
+    const encrypted = jwt.verify(token, process.env.JWT_SECRET!) as string;
+    const data = AES.decrypt(encrypted, true);
     req.userAuth = data;
     next();
   } catch (e) {
     console.log(e);
-    const status = e.code || 500;
+    const status = e.code || 403;
     res.status(status).send(e.message);
   }
 };

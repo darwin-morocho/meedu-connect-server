@@ -3,6 +3,7 @@
 /* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable no-console */
 import { Server as IOServer, Socket } from 'socket.io';
+import jwt from 'jsonwebtoken';
 import {
   joinTo,
   manageIceCandidates,
@@ -11,6 +12,7 @@ import {
   onMediaDeviceChanged,
   onLeave,
   screenSharing,
+  onMessages,
 } from './meet-manager';
 import AES from '../api/security/aes';
 import { UserAuthData } from '../models';
@@ -23,7 +25,8 @@ const ws = (io: IOServer): void => {
       if (!token) {
         throw { code: 403, message: 'missing token' };
       }
-      const data = AES.decrypt(token, true) as UserAuthData;
+      const encrypted = jwt.verify(token, process.env.JWT_SECRET!) as string;
+      const data = AES.decrypt(encrypted, true) as UserAuthData;
       socket.handshake.query.userData = data;
       next(); // allow connection
     } catch (e) {
@@ -40,6 +43,8 @@ const ws = (io: IOServer): void => {
 
     // a user is trying to join to one room
     joinTo(io, socket);
+
+    onMessages(io, socket);
 
     onMediaDeviceChanged(io, socket);
 

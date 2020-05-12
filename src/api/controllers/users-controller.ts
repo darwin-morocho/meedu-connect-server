@@ -1,6 +1,10 @@
 import { Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
+
 import AES from '../security/aes';
 import { UserAuthData } from '../../models';
+
+const expiresIn = 60 * 5; // 5 mins
 
 interface UserData {
   username: string;
@@ -8,11 +12,6 @@ interface UserData {
   extra: any;
 }
 
-/**
- * creates a user token to allow connect to websockets and consume the API
- * @param req
- * @param res
- */
 export const createUserToken = async (req: Request, res: Response): Promise<void> => {
   try {
     const data = req.body as UserData;
@@ -30,9 +29,9 @@ export const createUserToken = async (req: Request, res: Response): Promise<void
       },
       createdAt: new Date(),
     };
-
     const encrypted = AES.encrypt(dataToEncrypt, true);
-    res.send(encrypted); // send the token
+    const token = jwt.sign(encrypted, process.env.JWT_SECRET!, { expiresIn });
+    res.send({ token, expiresIn }); // send the token
   } catch (e) {
     console.log(e);
     if (e.name && e.name === 'MongoError') {

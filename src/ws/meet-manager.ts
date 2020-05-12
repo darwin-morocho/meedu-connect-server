@@ -156,6 +156,22 @@ export const onMediaDeviceChanged = (io: IOServer, socket: Socket): void => {
 };
 
 /**
+ *
+ * @param io
+ * @param socket
+ */
+export const onMessages = (io: IOServer, socket: Socket): void => {
+  // new offer was recived
+  socket.on('message', (data: any) => {
+    // send the offer to the user
+    const { roomId } = socket.handshake.query;
+    if (roomId) {
+      socket.broadcast.to(roomId).emit('message', data);
+    }
+  });
+};
+
+/**
  * manage when a user leaves a meet
  * @param io
  * @param socket
