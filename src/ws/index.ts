@@ -25,7 +25,7 @@ const ws = (io: IOServer): void => {
       if (!token) {
         throw { code: 403, message: 'missing token' };
       }
-      const encrypted = jwt.verify(token, process.env.JWT_SECRET!) as string;
+      const { encrypted } = jwt.verify(token, process.env.JWT_SECRET!) as any;
       const data = AES.decrypt(encrypted, true) as UserAuthData;
       socket.handshake.query.userData = data;
       next(); // allow connection

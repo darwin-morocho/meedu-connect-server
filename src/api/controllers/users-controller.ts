@@ -30,7 +30,7 @@ export const createUserToken = async (req: Request, res: Response): Promise<void
       createdAt: new Date(),
     };
     const encrypted = AES.encrypt(dataToEncrypt, true);
-    const token = jwt.sign(encrypted, process.env.JWT_SECRET!, { expiresIn });
+    const token = jwt.sign({ encrypted }, process.env.JWT_SECRET!, { expiresIn });
     res.send({ token, expiresIn }); // send the token
   } catch (e) {
     console.log(e);

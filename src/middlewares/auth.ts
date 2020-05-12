@@ -68,7 +68,7 @@ export const userAuth = async (req: Request, res: Response, next: NextFunction):
     if (!token || token.trim().length === 0) {
       throw { code: 400, message: 'invalid token' };
     }
-    const encrypted = jwt.verify(token, process.env.JWT_SECRET!) as string;
+    const { encrypted } = jwt.verify(token, process.env.JWT_SECRET!) as any;
     const data = AES.decrypt(encrypted, true);
     req.userAuth = data;
     next();
