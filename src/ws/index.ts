@@ -39,6 +39,7 @@ const ws = (io: IOServer): void => {
     // console.log('connected:', socket.id);
     // console.log('query', socket.handshake.query);
 
+    console.log('connected', socket.id);
     io.to(socket.id).emit('connected', socket.id);
 
     // a user is trying to join to one room
