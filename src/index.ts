@@ -24,11 +24,20 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 
+// Add headers
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  // Website you wish to allow to connect
+  res.setHeader('Access-Control-Allow-Origin', 'https://meet.itzam.ec');
+
+  // Request methods you wish to allow
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+  // Pass to next layer of middleware
   next();
 });
-
 v1(app);
 const server = http.createServer(app);
 
