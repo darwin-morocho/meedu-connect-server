@@ -14,20 +14,10 @@ import v1 from './api/routes';
 dotenv.config();
 
 const app: Application = express();
-app.use(express.static('public'));
-// set the view engine to ejs
-app.set('view engine', 'ejs');
-// enable cors
-app.use(cors());
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }));
-// parse application/json
-app.use(bodyParser.json());
-
 // Add headers
 app.use((req, res, next) => {
   // Website you wish to allow to connect
-  res.setHeader('Access-Control-Allow-Origin', 'https://meet.itzam.ec');
+  res.setHeader('Access-Control-Allow-Origin', '*');
 
   // Request methods you wish to allow
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -38,6 +28,17 @@ app.use((req, res, next) => {
   // Pass to next layer of middleware
   next();
 });
+
+app.use(express.static('public'));
+// set the view engine to ejs
+app.set('view engine', 'ejs');
+// enable cors
+app.use(cors());
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+// parse application/json
+app.use(bodyParser.json());
+
 v1(app);
 const server = http.createServer(app);
 
